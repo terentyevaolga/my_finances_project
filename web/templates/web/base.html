@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My finances</title>
+</head>
+<body>
+  <h1><a href="{% url 'main' %}">My finances</a></h1>
+  <nav>
+      <a href="{% url 'main' %}">Главная</a>
+      {% if user.is_anonymous %}
+          <a href="{% url 'registration' %}">Регистрация</a>
+          <a href="{% url 'auth' %}">Вход</a>
+      {% else %}
+          <a href="{% url 'logout' %}">Выход</a>
+      {% endif %}
+  </nav>
+
+    {% block content %}{% endblock %}
+
+</body>
+</html>
