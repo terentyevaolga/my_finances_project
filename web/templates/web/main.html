@@ -1,9 +1,15 @@
 {% extends 'web/base.html' %}
 {% block content %}
 
-    {% if not user.is_anonymous %}
-        Вы авторизованы как <b>{{ user.username }}</b>
-    {% endif %}
+    <ul>
+        {% for moneyslot in moneyslots %}
+            <li>
+                <b>{{ moneyslot.title}}</b>
+                - {{ moneyslot.amount_spent}} р
 
+                <a href="{% url 'money_slots_edit' moneyslot.id %}">изменить</a>
+            </li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}

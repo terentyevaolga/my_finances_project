@@ -1,17 +1,16 @@
-from datetime import datetime
-
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.shortcuts import render, redirect
 
-from web.forms import RegistrationForm, AuthForm
+from web.forms import RegistrationForm, AuthForm, MoneySlotForm
+from web.models import MoneySlot
 
 User = get_user_model()
 
 
 def main_view(request):
-    year = datetime.now().year
+    moneyslots = MoneySlot.objects.all()
     return render(request, 'web/main.html', {
-        'year': year
+        'moneyslots': moneyslots
     })
 
 
@@ -50,4 +49,16 @@ def auth_view(request):
 def logout_view(request):
     logout(request)
     return redirect('main')
+
+
+def money_slot_edit_view(request, id=None):
+    moneyslot = MoneySlot.objects.get(id=id) if id is not None else None
+    form = MoneySlotForm(instance=moneyslot)
+    if request.method == 'POST':
+        form = MoneySlotForm(data=request.POST, instance=moneyslot, initial={'user': request.user})
+        if form.is_valid():
+            form.save()
+            return redirect('main')
+    return render(request, 'web/money_slot_form.html', {'form': form})
+
 

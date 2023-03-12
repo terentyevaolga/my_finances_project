@@ -5,18 +5,28 @@
     <title>My finances</title>
 </head>
 <body>
-  <h1><a href="{% url 'main' %}">My finances</a></h1>
-  <nav>
-      <a href="{% url 'main' %}">Главная</a>
-      {% if user.is_anonymous %}
-          <a href="{% url 'registration' %}">Регистрация</a>
-          <a href="{% url 'auth' %}">Вход</a>
-      {% else %}
-          <a href="{% url 'logout' %}">Выход</a>
-      {% endif %}
-  </nav>
+<h1><a href="{% url 'main' %}">My finances</a></h1>
+<nav>
+    <a href="{% url 'main' %}">Главная</a>
+    {% if user.is_anonymous %}
+        <div style='text-align: right'>
+            <a href="{% url 'registration' %}">Регистрация</a>
+            <a href="{% url 'auth' %}">Вход</a>
+        </div>
+    {% else %}
 
-    {% block content %}{% endblock %}
+    <p><a href="{% url 'money_slots_add' %}">Создать money-слот</a></p>
+
+    <div style='text-align: right'>
+        {% if not user.is_anonymous %}
+            Вы авторизованы как <b>{{ user.username }}</b>
+        {% endif %}
+        <a href="{% url 'logout' %}">Выход</a>
+    </div>
+    {% endif %}
+</nav>
+
+{% block content %}{% endblock %}
 
 </body>
 </html>
