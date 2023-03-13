@@ -15,7 +15,10 @@
         </div>
     {% else %}
 
-    <p><a href="{% url 'money_slots_add' %}">Создать money-слот</a></p>
+    <p>
+        <a href="{% url 'money_slots_add' %}">Создать money-слот</a>
+        <a href="{% url 'tags' %}">Теги</a>
+    </p>
 
     <div style='text-align: right'>
         {% if not user.is_anonymous %}

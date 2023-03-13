@@ -1,6 +1,7 @@
 from django.urls import path
 
-from web.views import main_view, registration_view, auth_view, logout_view, money_slot_edit_view
+from web.views import main_view, registration_view, auth_view, logout_view, money_slot_edit_view, tags_view, \
+    tags_delete_view
 
 urlpatterns = [
     path('', main_view, name='main'),
@@ -9,6 +10,8 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('money_slots/add/', money_slot_edit_view, name='money_slots_add'),
     path('money_slots/<int:id>/', money_slot_edit_view, name='money_slots_edit'),
+    path('tags/', tags_view, name='tags'),
+    path('tags/<int:id>/delete', tags_delete_view, name='tags_delete'),
 ]
 
 

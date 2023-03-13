@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-from web.models import MoneySlot
+from web.models import MoneySlot, MoneySlotTag
 
 User = get_user_model()
 
@@ -33,5 +33,16 @@ class MoneySlotForm(forms.ModelForm):
 
     class Meta:
         model = MoneySlot
-        fields = ('title', 'amount_spent', 'image')
+        fields = ('title', 'amount_spent', 'image', 'tags')
+
+
+class MoneySlotTagForm(forms.ModelForm):
+
+    def save(self, commit=True):
+        self.instance.user = self.initial['user']
+        return super().save(commit)
+
+    class Meta:
+        model = MoneySlotTag
+        fields = ('title',)
 
