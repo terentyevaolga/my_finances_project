@@ -55,7 +55,7 @@ def money_slot_edit_view(request, id=None):
     moneyslot = MoneySlot.objects.get(id=id) if id is not None else None
     form = MoneySlotForm(instance=moneyslot)
     if request.method == 'POST':
-        form = MoneySlotForm(data=request.POST, instance=moneyslot, initial={'user': request.user})
+        form = MoneySlotForm(data=request.POST, files=request.FILES, instance=moneyslot, initial={'user': request.user})
         if form.is_valid():
             form.save()
             return redirect('main')

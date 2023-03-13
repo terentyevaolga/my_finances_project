@@ -33,5 +33,5 @@ class MoneySlotForm(forms.ModelForm):
 
     class Meta:
         model = MoneySlot
-        fields = ('title', 'amount_spent')
+        fields = ('title', 'amount_spent', 'image')
 
