@@ -7,6 +7,7 @@ User = get_user_model()
 
 
 class RegistrationForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
     repassword = forms.CharField(widget=forms.PasswordInput())
 
     def clean(self):

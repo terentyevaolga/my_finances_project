@@ -29,7 +29,7 @@ def registration_view(request):
             )
             user.set_password(form.cleaned_data['password'])
             user.save()
-            print(form.cleaned_data)
+            return redirect('main')
     return render(request, 'web/registration.html', {
         'form': form, 'is_success': is_success
     })
