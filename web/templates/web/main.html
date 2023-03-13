@@ -1,9 +1,23 @@
 {% extends 'web/base.html' %}
 {% block content %}
 
-    {% if not user.is_anonymous %}
-        Вы авторизованы как <b>{{ user.username }}</b>
-    {% endif %}
+    <b>Добавить money слот</b>
+    <form action="{% url 'money_slots_add' %}" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button>Сохранить</button>
+    </form>
 
+    <ul>
+        {% for moneyslot in moneyslots %}
+        <li>
+            <b>{{ moneyslot.title}}</b>
+            - {{ moneyslot.amount_spent}} р
+
+            <a href="{% url 'money_slots_edit' moneyslot.id %}">изменить</a>
+            <a href="{% url 'money_slot_delete' moneyslot.id %}">удалить</a>
+        </li>
+        {% endfor %}
+    </ul>
 
 {% endblock %}
