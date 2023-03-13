@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model, authenticate, login, logout
-from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
 
 from web.forms import RegistrationForm, AuthForm, MoneySlotForm, MoneySlotTagForm
 from web.models import MoneySlot, MoneySlotTag
@@ -7,10 +8,12 @@ from web.models import MoneySlot, MoneySlotTag
 User = get_user_model()
 
 
+@login_required
 def main_view(request):
-    moneyslots = MoneySlot.objects.all()
+    moneyslots = MoneySlot.objects.filter(user=request.user)
     return render(request, 'web/main.html', {
-        'moneyslots': moneyslots
+        'moneyslots': moneyslots,
+        'form': MoneySlotForm()
     })
 
 
@@ -51,8 +54,9 @@ def logout_view(request):
     return redirect('main')
 
 
+@login_required
 def money_slot_edit_view(request, id=None):
-    moneyslot = MoneySlot.objects.get(id=id) if id is not None else None
+    moneyslot = get_object_or_404(MoneySlot, user=request.user, id=id) if id is not None else None
     form = MoneySlotForm(instance=moneyslot)
     if request.method == 'POST':
         form = MoneySlotForm(data=request.POST, files=request.FILES, instance=moneyslot, initial={'user': request.user})
@@ -62,8 +66,16 @@ def money_slot_edit_view(request, id=None):
     return render(request, 'web/money_slot_form.html', {'form': form})
 
 
+@login_required
+def money_slot_delete_view(request, id):
+    # не факт что здесь надо user=request.user
+    tag = get_object_or_404(MoneySlot, user=request.user, id=id)
+    tag.delete()
+    return redirect('main')
+
+
 def _list_editor_view(request, model_cls, form_cls, template_name, url_name):
-    items = model_cls.objects.all()
+    items = model_cls.objects.filter(user=request.user)
     form = form_cls
     if request.method == 'POST':
         form = form_cls(data=request.POST, initial={'user': request.user})
@@ -73,12 +85,14 @@ def _list_editor_view(request, model_cls, form_cls, template_name, url_name):
     return render(request, f'web/{template_name}.html', {'items': items, 'form': form})
 
 
+@login_required
 def tags_view(request):
     return _list_editor_view(request, MoneySlotTag, MoneySlotTagForm, 'tags', 'tags')
 
 
+@login_required
 def tags_delete_view(request, id):
-    tag = MoneySlotTag.objects.get(id=id)
+    tag = get_object_or_404(MoneySlotTag, user=request.user, id=id)
     tag.delete()
     return redirect('tags')
 
