@@ -47,3 +47,6 @@ class MoneySlotTagForm(forms.ModelForm):
         model = MoneySlotTag
         fields = ('title',)
 
+
+class MoneySlotFilterForm(forms.Form):
+    search = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Поиск'}), required=False)

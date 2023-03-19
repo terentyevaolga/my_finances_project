@@ -8,6 +8,17 @@
         <button>Сохранить</button>
     </form>
 
+    <hr>
+    <form action="">
+        <b>Фильтры:</b><br>
+
+        {% for field in filter_form %}
+            {{ field }}
+        {% endfor %}
+
+        <button>Найти</button>
+    </form>
+
     <ul>
         {% for moneyslot in moneyslots %}
         <li>
@@ -19,5 +30,20 @@
         </li>
         {% endfor %}
     </ul>
+
+    всего {{ total_count }} записей | {{ moneyslots|length }} из них на этой странице
+    <nav>
+        {% if moneyslots.has_previous %}
+            <a href="/?page=1">в начало</a>
+            <a href="/?page={{ moneyslots.previous_page_number }}">предыдущая страница</a>
+        {% endif %}
+
+        страница {{ moneyslots.number }} из {{ moneyslots.paginator.num_pages }}
+
+        {% if moneyslots.has_next %}
+            <a href="/?page={{ moneyslots.next_page_number }}">следующая страница</a>
+            <a href="/?page={{ moneyslots.paginator.num_pages }}">в конец</a>
+        {% endif %}
+    </nav>
 
 {% endblock %}
