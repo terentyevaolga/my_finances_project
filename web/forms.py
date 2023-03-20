@@ -47,3 +47,17 @@ class MoneySlotTagForm(forms.ModelForm):
         model = MoneySlotTag
         fields = ('title',)
 
+
+class MoneySlotFilterForm(forms.Form):
+    search = forms.CharField(
+        label='Поиск',
+        widget=forms.TextInput(attrs={'placeholder': 'Поиск'}),
+        required=False
+    )
+    amount_spent = forms.CharField(
+        label='Фильтр по потраченной сумме',
+        widget=forms.TextInput(attrs={'placeholder': 'Введите сумму'}),
+        required=False
+    )
+
+
