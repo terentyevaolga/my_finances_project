@@ -1,11 +1,13 @@
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Count, F, Max, Min
+from django.db.models import Count, Max, Min
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from web.forms import RegistrationForm, AuthForm, MoneySlotForm, MoneySlotTagForm, MoneySlotFilterForm
 from web.models import MoneySlot, MoneySlotTag
+from web.services import filter_moneyslots, export_moneyslots_csv
 
 User = get_user_model()
 
@@ -16,13 +18,7 @@ def main_view(request):
 
     filter_form = MoneySlotFilterForm(request.GET)
     filter_form.is_valid()
-    filters = filter_form.cleaned_data
-
-    if filters['search']:
-        moneyslots = moneyslots.filter(title__icontains=filters['search'])
-
-    if filters['amount_spent']:
-        moneyslots = moneyslots.filter(amount_spent=filters['amount_spent'])
+    moneyslots = filter_moneyslots(moneyslots, filter_form.cleaned_data)
 
     total_count = moneyslots.count()
     # moneyslots = moneyslots.prefetch_related('tags').select_related('user').annotate(
@@ -30,6 +26,13 @@ def main_view(request):
     # )
     page_number = request.GET.get('page', 1)
     paginator = Paginator(moneyslots, per_page=2)
+
+    if request.GET['export'] == 'csv':
+        response = HttpResponse(
+            content_type='text/csv',
+            headers={'Content-Disposition': 'attachment; filename=moneyslots.csv'}
+        )
+        return export_moneyslots_csv(moneyslots, response)
 
     return render(request, 'web/main.html', {
         'moneyslots': paginator.get_page(page_number),
