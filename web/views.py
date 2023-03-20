@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db.models import Count, F, Max, Min
 from django.shortcuts import render, redirect, get_object_or_404
 
 from web.forms import RegistrationForm, AuthForm, MoneySlotForm, MoneySlotTagForm, MoneySlotFilterForm
@@ -20,7 +21,13 @@ def main_view(request):
     if filters['search']:
         moneyslots = moneyslots.filter(title__icontains=filters['search'])
 
+    if filters['amount_spent']:
+        moneyslots = moneyslots.filter(amount_spent=filters['amount_spent'])
+
     total_count = moneyslots.count()
+    # moneyslots = moneyslots.prefetch_related('tags').select_related('user').annotate(
+    #     amountTags=Count('tags')
+    # )
     page_number = request.GET.get('page', 1)
     paginator = Paginator(moneyslots, per_page=2)
 
@@ -29,6 +36,18 @@ def main_view(request):
         'form': MoneySlotForm(),
         'filter_form': filter_form,
         'total_count': total_count
+    })
+
+
+@login_required
+def analytics_view(request):
+    overall_stat = MoneySlot.objects.aggregate(
+        Count('id'),
+        Max('amount_spent'),
+        Min('amount_spent'),
+    )
+    return render(request, 'web/analytics.html', {
+        'overall_stat': overall_stat
     })
 
 
@@ -110,4 +129,3 @@ def tags_delete_view(request, id):
     tag = get_object_or_404(MoneySlotTag, user=request.user, id=id)
     tag.delete()
     return redirect('tags')
-

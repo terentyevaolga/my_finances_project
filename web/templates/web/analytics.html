@@ -1,0 +1,9 @@
+{% extends 'web/base.html' %}
+{% block content %}
+    <h2>Аналитика</h2>
+
+    Всего <b>{{ overall_stat.id__count }}</b> слотов <br>
+    Максимальная потраченная сумма: <b>{{ overall_stat.amount_spent__max }} р </b> <br>
+    Минимальная потраченная сумма: <b>{{ overall_stat.amount_spent__min }} р </b> <br>
+
+{% endblock %}

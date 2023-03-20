@@ -13,10 +13,13 @@
         <b>Фильтры:</b><br>
 
         {% for field in filter_form %}
+            {{ field.label }}
             {{ field }}
         {% endfor %}
 
         <button>Найти</button>
+
+        <a href="?">Сбросить фильтры</a>
     </form>
 
     <ul>
@@ -24,6 +27,12 @@
         <li>
             <b>{{ moneyslot.title}}</b>
             - {{ moneyslot.amount_spent}} р
+
+            {% if moneyslot.tags.all %}
+                [{{ moneyslot.tags_count }}: {% for tag in moneyslot.tags.all %} {{ tag.title }} {% endfor %}]
+            {% endif %}
+
+            {{ moneyslot.user.username }}
 
             <a href="{% url 'money_slots_edit' moneyslot.id %}">изменить</a>
             <a href="{% url 'money_slot_delete' moneyslot.id %}">удалить</a>
