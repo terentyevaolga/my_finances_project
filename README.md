@@ -8,3 +8,6 @@
 - `venv\Scripts\activate` - войти в виртуальное окружение
 - `python manage.py migrate` - применить миграции
 - `pip install -r requirements.txt` - установка зависимостей
+
+
+[//]: # (импорт и экспорт работают с багами)

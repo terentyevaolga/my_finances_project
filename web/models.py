@@ -12,6 +12,10 @@ class MoneySlotTag(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = 'тег'
+        verbose_name_plural = 'теги'
+
 
 class MoneySlot(models.Model):
     title = models.CharField(max_length=256, verbose_name='Название')
@@ -19,4 +23,11 @@ class MoneySlot(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     tags = models.ManyToManyField(MoneySlotTag)
     image = models.ImageField(upload_to='money_slots/', null=True, blank=True, verbose_name='Изображение')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'слот'
+        verbose_name_plural = 'слоты'
 
