@@ -5,9 +5,9 @@ from django.db.models import Count, Max, Min
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
-from web.forms import RegistrationForm, AuthForm, MoneySlotForm, MoneySlotTagForm, MoneySlotFilterForm
+from web.forms import RegistrationForm, AuthForm, MoneySlotForm, MoneySlotTagForm, MoneySlotFilterForm, ImportForm
 from web.models import MoneySlot, MoneySlotTag
-from web.services import filter_moneyslots, export_moneyslots_csv
+from web.services import filter_moneyslots, export_moneyslots_csv, import_moneyslots_from_csv
 
 User = get_user_model()
 
@@ -27,12 +27,14 @@ def main_view(request):
     page_number = request.GET.get('page', 1)
     paginator = Paginator(moneyslots, per_page=2)
 
-    if request.GET['export'] == 'csv':
-        response = HttpResponse(
-            content_type='text/csv',
-            headers={'Content-Disposition': 'attachment; filename=moneyslots.csv'}
-        )
-        return export_moneyslots_csv(moneyslots, response)
+    # НЕ РАБОТАЕТ!
+
+    # if request.GET['export'] == 'csv':
+    #     response = HttpResponse(
+    #         content_type='text/csv',
+    #         headers={'Content-Disposition': 'attachment; filename=moneyslots.csv'}
+    #     )
+    #     return export_moneyslots_csv(moneyslots, response)
 
     return render(request, 'web/main.html', {
         'moneyslots': paginator.get_page(page_number),
@@ -51,6 +53,18 @@ def analytics_view(request):
     )
     return render(request, 'web/analytics.html', {
         'overall_stat': overall_stat
+    })
+
+
+@login_required
+def import_view(request):
+    if request.method == 'POST':
+        form = ImportForm(files=request.FILES)
+        if form.is_valid():
+            import_moneyslots_from_csv(form.cleaned_data['file'], request.user.id)
+            return redirect('main')
+    return render(request, 'web/import.html', {
+        'form': ImportForm()
     })
 
 

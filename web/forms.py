@@ -61,3 +61,6 @@ class MoneySlotFilterForm(forms.Form):
     )
 
 
+class ImportForm(forms.Form):
+    file = forms.FileField()
+
