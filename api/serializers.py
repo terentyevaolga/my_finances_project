@@ -15,12 +15,23 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'title')
 
 
-class MoneySlotSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    title = serializers.CharField()
-    amount_spent = serializers.IntegerField()
-    user = UserSerializer()
-    tags = TagSerializer(many=True)
+class MoneySlotSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+    tag_ids = serializers.PrimaryKeyRelatedField(queryset=MoneySlotTag.objects.all(), many=True, write_only=True)
+
+    def save(self, **kwargs):
+        tags = self.validated_data.pop("tag_ids")
+        self.validated_data['user_id'] = self.context['request'].user.id
+        instance = super().save(**kwargs)
+        instance.tags.set(tags)
+        return instance
+
+    class Meta:
+        model = MoneySlot
+        fields = ('id', 'title', 'amount_spent', 'tags', 'user', 'tag_ids')
+
+
 
 
 

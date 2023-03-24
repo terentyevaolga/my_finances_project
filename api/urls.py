@@ -16,13 +16,18 @@ Including another URLconf
 
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.routers import SimpleRouter
 
-from api.views import main_view, moneyslots_view
+from api.views import main_view, MoneyslotModelViewSet, TagsViewSet
+
+router = SimpleRouter()
+router.register('moneyslots', MoneyslotModelViewSet, basename='moneyslots')
+router.register('tags', TagsViewSet, basename='tags')
 
 urlpatterns = [
     path('', main_view),
     path('token/', obtain_auth_token),
-    path('moneyslots/', moneyslots_view),
+    *router.urls
 ]
 
 
