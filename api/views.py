@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 from api.serializers import MoneySlotSerializer
 from web.models import MoneySlot
@@ -11,10 +12,14 @@ def main_view(request):
     return Response({'status': 'ok'})
 
 
-@api_view(["GET"])
-def moneyslots_view(request):
-    money_slots = MoneySlot.objects.all().select_related('user').prefetch_related('tags')
-    serializer = MoneySlotSerializer(money_slots, many=True)
-    return Response(serializer.data)
+class MoneyslotModelViewSet(ModelViewSet):
+    serializer_class = MoneySlotSerializer
+
+    def get_queryset(self):
+        return MoneySlot.objects.all().select_related('user').prefetch_related('tags').filter(user=self.request.user)
 
 
+class TagsViewSet(ModelViewSet):
+
+    def get_queryset(self):
+        return MoneySlotTag.objects.all().filter(user=self.request.user)
