@@ -21,20 +21,8 @@ def main_view(request):
     moneyslots = filter_moneyslots(moneyslots, filter_form.cleaned_data)
 
     total_count = moneyslots.count()
-    # moneyslots = moneyslots.prefetch_related('tags').select_related('user').annotate(
-    #     amountTags=Count('tags')
-    # )
     page_number = request.GET.get('page', 1)
     paginator = Paginator(moneyslots, per_page=2)
-
-    # НЕ РАБОТАЕТ!
-
-    # if request.GET['export'] == 'csv':
-    #     response = HttpResponse(
-    #         content_type='text/csv',
-    #         headers={'Content-Disposition': 'attachment; filename=moneyslots.csv'}
-    #     )
-    #     return export_moneyslots_csv(moneyslots, response)
 
     return render(request, 'web/main.html', {
         'moneyslots': paginator.get_page(page_number),
